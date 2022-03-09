@@ -13,10 +13,23 @@ router.post("/", async (req, res) => {
     }
   });
 
+
+router.get("/speciality/:id", async (req, res) => {
+    console.log("sdjhfjhj")
+    try{
+        const doctors = await Doctor.find({speciality: {$eq: req.params.id}}).lean().exec();
+        console.log('doctors:', doctors)
+        return res.status(201).send(doctors);
+       
+    }catch(e){
+        return res.status(500).json({message: e.message, status: "Failed"});
+    }
+})
+
 router.get("/", async (req, res) => {
     try{
         const doctors = await Doctor.find().lean().exec();
-        return res.status(201).send({doctors});
+        return res.status(201).send(doctors);
     }catch(e){
         return res.status(500).json({message: e.message, status: "Failed"});
     }

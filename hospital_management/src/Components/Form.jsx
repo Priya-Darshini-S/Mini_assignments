@@ -1,11 +1,22 @@
 import { useState, useEffect } from "react";
 import { v4 as uuidv4 } from 'uuid';
+import { Doctor } from "./Doctors";
 import "./Form.css"
 
 
 export const Form = () => {
     const [doctors, setDoctors] = useState([]);
+    const [specia_id, setSpecia_id] = useState([]);
+    const [flag, setFlag] = useState(0);
+    console.log('specia_id:', specia_id)
     const [array, setArray] = useState([]);
+
+    let gyneo = ["Anu Deshpande"];
+    let pedia = ["Anu Deshpande", "Madhu Banerji"];
+    let neuro = ["Akshay Kumar", "Keerthana SK"];
+    let cardio = ["Madhu Banerji", "Keerthana SK"];
+    let urolo = ["Akshay Kumar", "Madhu Banerji"];
+    let ortho = ["Bala Krishna"]
 
 
     const d = {
@@ -26,8 +37,12 @@ export const Form = () => {
 
    
     useEffect(() => {
-        console.log("in effects")
         getProducts();
+        console.log("hello")
+        // specia_id.forEach(element => {
+        //     console.log("ele", element)
+        //    // getSpeciality(element); 
+        // });
     }, []);
 
     const getProducts = () => {
@@ -35,52 +50,71 @@ export const Form = () => {
         .then((d) => d.json())
         .then((res) => {
            let out = res.specialitys;
+           let arr = [];
+           let temp = [];
             out.forEach(element => {
-                setDoctors([...doctors, element.speciality]);
+                arr.push(element.speciality);
+                temp.push(element._id);
             });
-            console.log("doc", doctors)
+             setDoctors(arr);
+             setSpecia_id(temp);
+           
         })
     }; 
+
+    // const getSpeciality = (id) => {
+    //     fetch(`http://localhost:2123/doctor/speciality/${id}`)
+    //     .then((d) => d.json())
+    //     .then((res) => {
+    //        console.log("res", res);
+    //     })
+    // }; 
     
     const handleChange = (e) => {  
 
         let {name, value} = e.target;
     
-        //    if(e.target.value === "neurol"){
-        //     setArray(neurology);
-        //     }else if(e.target.value === "gynecol"){
-        //     setArray(gynecology);
-        //     }else if(e.target.value === "urol"){
-        //     setArray(urology);
-        //     }else if(e.target.value === "ortho"){
-        //     setArray(orthodontist);
-        //     }else if(e.target.value === "cardio"){
-        //     setArray(cardiologist);
-        //     }else if(e.target.value === "pedia"){
-        //     setArray(pediatrician);
-        //     }
+           if(e.target.value === "Neurology"){
+            setArray(neuro);
+            }else if(e.target.value === "Gynecologist"){
+            setArray(gyneo);
+            }else if(e.target.value === "Urology"){
+            setArray(urolo);
+            }else if(e.target.value === "Orthodontist"){
+            setArray(ortho);
+            }else if(e.target.value === "Cardiology"){
+            setArray(cardio);
+            }else if(e.target.value === "Pediatrician"){
+            setArray(pedia);
+            }
         
         setForm({ ...form, [name]: value, });
       
     };
     const handleSubmit = (e) => {
         e.preventDefault();
-           console.log("form", form);
-         //  console.log(array)
-         
-       // getData(formDet);
-    };
 
-    return(
+        if(form.patientname.length == 0){
+            alert("Please enter name")
+        }else if(form.age.length == 0){
+            alert("Please enter age")
+        }else{
+         alert("Appointment booked");
+          setFlag(1);
+        }
+    };
+       
+    return flag? <Doctor /> : (
+        
         <div>
 
              <div>Book Appointments Below</div>
             <form id="input_form"  onSubmit={handleSubmit}>
                 <label>ENTER NAME: </label>
-                <input onChange={handleChange} name="patientname" type="text" placeholder="Enter Patient Name" />
+                <input onChange={handleChange} name="patientname" type="text" placeholder="Enter Patient Name" required= "true" />
 
                 <label>ENTER AGE: </label>
-                <input onChange={handleChange} name="age" type="number" placeholder="Enter Patient Age" />
+                <input onChange={handleChange} name="age" type="number" placeholder="Enter Patient Age" required/>
                  
                 <label>SELECT GENDER: </label>
                 <select onChange={handleChange} name="gender">
@@ -91,22 +125,20 @@ export const Form = () => {
 
                 <label>SELECT DEPARTMENT: </label>
                 <select onChange={handleChange} name="department">
-                    <option value="none">None</option>
-                    <option value="gynecol">Gynecology</option>
-                    <option value="neurol">Neurology</option>
-                    <option value="urol">Urology</option>
-                    <option value="ortho">Orthodontist</option>
-                    <option value="cardio">Cardiologist</option>
-                    <option value="pedia">Pediatrician</option>
+                      { doctors.map(element => {
+                       return ( <option value = {element}> {element} </option> )
+                    })
+                }
                 </select >
                 
                 <label>DOCTORS: </label>
                 <select onChange={handleChange} name="doctor">
-                   {/* { console.log("array", array) } */}
-                    {/* { array.map(element => {
+                 
+                    { array.map(element => {
                        return ( <option value = {element}> {element} </option> )
-                    }) */}
-                {/* }; */}
+                    })
+                }
+                
                 </select >
 
                 <label>DATE</label>
